@@ -11,6 +11,9 @@ pytest = "*"
 pytest-django = "*"
 today = "*"
 django-basicauth = "*"
+gunicorn = "*"
+django-heroku = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.9"
