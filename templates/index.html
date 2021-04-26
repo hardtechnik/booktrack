@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block body %}
+  {% for progress in progresses %}
+    <div>
+    {% with book=progress.book %}
+      {{ book.title }} will be completed at {{ progress.expected_end|default_if_none:"N/A" }}
+    {% endwith %}
+    <form id="progress-form-{{ progress.id }}" method="POST" action="{% url 'update_progress' %}">
+      <input type="hidden" name="progress" value="{{ progress.id }}" />
+      <label for="progress-currentPage-{{ progress.id }}">Current page:</label>
+      <input
+        id="progress-currentPage-{{ progress.id }}"
+        type="number"
+        name="current_page"
+        value="{{ progress.page }}"
+        required
+      />
+      <label for="progress-readPages-{{ progress.id }}">Read:</label>
+      <input
+        id="progress-readPages-{{ progress.id }}"
+        type="number"
+        name="read_pages"
+        required
+      />
+      <label for="progress-date-{{ progress.id }}">Date:</label>
+      <input
+        class="progress-date"
+        id="progress-date-{{ progress.id }}"
+        type="date"
+        name="date"
+        required
+      />
+      <input type="submit" form="progress-form-{{ progress.id }}"  value="Save" />
+      <input type="submit" form="delete-book-{{ progress.book.id }}" value="Delete">
+      {% csrf_token %}
+    </form>
+    <form id="delete-book-{{ progress.book.id }}" method="POST" action="{% url 'delete_book' progress.book.id %}">{% csrf_token %}</form>
+    </div>
+  {% endfor %}
+
+    <p>
+    Add a book
+    </p>
+    <form id="add-book" method="POST" action="{% url 'add_book' %}">
+      {% csrf_token %}
+        <label for="book-title">Title:</label>
+        <input type="text" id="book-title" name="title"/>
+        <label for="book-pages">Pages:</label>
+        <input type="text" id="book-pages" name="pages"/>
+        <input type="submit" form="add-book" value="Save">
+    </form>
+
+{% endblock %}
+
+{% block footer %}
+    <script>
+      var now = new Date();
+      var day = ("0" + now.getDate()).slice(-2);
+      var month = ("0" + (now.getMonth() + 1)).slice(-2);
+      var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
+      var fields = document.getElementsByClassName('progress-date');
+      for (var i = 0, length = fields.length; i < length; i++) {
+          var field = fields[i];
+          field.setAttribute('value', today);
+      }
+    </script>
+{% endblock %}
