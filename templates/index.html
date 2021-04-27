@@ -3,7 +3,8 @@
   {% for progress in progresses %}
     <div>
     {% with book=progress.book %}
-      {{ book.title }} will be completed at {{ progress.expected_end|default_if_none:"N/A" }}
+      {{ book.title }} ({{ progress.page }}/{{ book.pages }}) will be completed at {{ progress.expected_end|default_if_none:"N/A" }}.
+      Current tempo is {{ progress.avg_pages_per_day }} pages per day.
     {% endwith %}
     <form id="progress-form-{{ progress.id }}" method="POST" action="{% url 'update_progress' %}">
       <input type="hidden" name="progress" value="{{ progress.id }}" />
@@ -15,7 +16,7 @@
         value="{{ progress.page }}"
         required
       />
-      <label for="progress-readPages-{{ progress.id }}">Read:</label>
+      <label for="progress-readPages-{{ progress.id }}">Read pages:</label>
       <input
         id="progress-readPages-{{ progress.id }}"
         type="number"

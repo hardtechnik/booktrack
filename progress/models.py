@@ -17,9 +17,13 @@ class BookProgress(models.Model):
     page = models.PositiveIntegerField()
 
     @property
+    def avg_pages_per_day(self):
+        return round(self.daily.aggregate(avg_pages=Avg('read_pages'))['avg_pages'] or 0, 1)
+
+    @property
     def expected_end(self):
-        avg_pages = self.daily.aggregate(avg_pages=Avg('read_pages'))['avg_pages']
-        if not avg_pages:
+        avg_pages = self.avg_pages_per_day
+        if avg_pages == 0:
             return None
         need_to_read = self.book.pages - self.page
         expected_days = need_to_read // avg_pages
