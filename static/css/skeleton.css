@@ -172,11 +172,11 @@ input[type="reset"],
 input[type="button"] {
   display: inline-block;
   height: 38px;
-  padding: 0 30px;
+  padding: 0 20px;
   color: #555;
   text-align: center;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 40px;
   letter-spacing: .1rem;
   text-transform: uppercase;
@@ -186,7 +186,7 @@ input[type="button"] {
   border-radius: 4px;
   border: 1px solid #bbb;
   cursor: pointer;
-  box-sizing: border-box; }
+}
 .button:hover,
 button:hover,
 input[type="submit"]:hover,
@@ -238,8 +238,7 @@ select {
   height: 38px;
   padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
   background-color: #fff;
-  border: 1px solid #D1D1D1;
-  border-radius: 4px;
+  border: none;
   box-shadow: none;
   box-sizing: border-box; }
 /* Removes awkward default styles on some inputs for iOS */
@@ -250,6 +249,7 @@ input[type="text"],
 input[type="tel"],
 input[type="url"],
 input[type="password"],
+input[type="date"],
 textarea {
   -webkit-appearance: none;
      -moz-appearance: none;
@@ -265,13 +265,13 @@ input[type="text"]:focus,
 input[type="tel"]:focus,
 input[type="url"]:focus,
 input[type="password"]:focus,
+input[type="date"]:focus,
 textarea:focus,
 select:focus {
   border: 1px solid #33C3F0;
   outline: 0; }
 label,
 legend {
-  display: block;
   margin-bottom: .5rem;
   font-weight: 600; }
 fieldset {
@@ -285,6 +285,9 @@ label > .label-body {
   margin-left: .5rem;
   font-weight: normal; }
 
+.short {
+  width: 120px;
+}
 
 /* Lists
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -392,8 +395,8 @@ hr {
   clear: both; }
 
 
-.light-input {
-  border: none !important;
+.unblock {
+  display: inline !important;
 }
 
 

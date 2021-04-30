@@ -6,37 +6,32 @@
       }
     </style>
   <div style="margin-top: 2em">
-  <h4>You're reading:</h4>
+  <h5>You're reading:</h5>
   {% for progress in progresses %}
     {% with book=progress.book %}
       {{ book.title }} ({{ progress.page }}/{{ book.pages }}) will be completed at {{ progress.expected_end|default_if_none:"N/A" }}.
       Current tempo is {{ progress.avg_pages_per_day }} pages per day.
     {% endwith %}
-    <form class="flex-horizontal" id="progress-form-{{ progress.id }}" method="POST" action="{% url 'update_progress' %}">
-    <div class="">
+    <form id="progress-form-{{ progress.id }}" method="POST" action="{% url 'update_progress' %}">
       <input type="hidden" name="progress" value="{{ progress.id }}" />
       <label for="progress-currentPage-{{ progress.id }}">Current page:</label>
       <input
-        class="light-input"
+        class="light-input short"
         id="progress-currentPage-{{ progress.id }}"
         type="number"
         name="current_page"
         value="{{ progress.page }}"
         required
       />
-    </div>
-    <div class="">
       <label for="progress-readPages-{{ progress.id }}">Read pages:</label>
       <input
-        class="light-input"
+        class="light-input short"
         id="progress-readPages-{{ progress.id }}"
         type="number"
         name="read_pages"
         value="{{ progress.avg_pages_per_day|floatformat:0 }}"
         required
       />
-    </div>
-    <div class="">
       <label for="progress-date-{{ progress.id }}">Date:</label>
       <input
         class="progress-date light-input"
@@ -45,25 +40,22 @@
         name="date"
         required
       />
-    </div>
-    <div style="margin-top: 29px; margin-left: 5px;">
-      <input class="button-primary" type="submit" form="progress-form-{{ progress.id }}"  value="Save" />
+      <input class="button-primary" type="submit" form="progress-form-{{ progress.id }}" value="Save" />
       <input class="button" type="submit" form="delete-book-{{ progress.book.id }}" value="Delete">
-    </div>
     {% csrf_token %}
     </form>
     <form id="delete-book-{{ progress.book.id }}" method="POST" action="{% url 'delete_book' progress.book.id %}">{% csrf_token %}</form>
   {% endfor %}
   </div>
 
-  <h4>Add a book:</h4>
-  <form class="" id="add-book" method="POST" action="{% url 'add_book' %}">
+  <h5>Add a book:</h5>
+  <form id="add-book" method="POST" action="{% url 'add_book' %}">
     {% csrf_token %}
-    <label for="book-title">Title:</label>
-    <input type="text" id="book-title" name="title"/>
-    <label for="book-pages">Pages:</label>
-    <input type="text" id="book-pages" name="pages"/>
-    <input class="button" type="submit" form="add-book" value="Save">
+    <label class="unblock" for="book-title">Title:</label>
+    <input class="light-input" placeholder="Title of a book" type="text" id="book-title" name="title"/>
+    <label class="unblock" for="book-pages">Pages:</label>
+    <input class="light-input" placeholder="Total number of pages" type="text" id="book-pages" name="pages"/>
+    <input class="button" type="submit" form="add-book" value="Add">
   </form>
 
 {% endblock %}
