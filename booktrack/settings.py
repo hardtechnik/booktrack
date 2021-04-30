@@ -29,10 +29,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 
-BASICAUTH_USERS = {
-    'rkashapov': 'zqpCB!FuD7*#^w',
-}
-
 # Application definition
 
 INSTALLED_APPS = [
