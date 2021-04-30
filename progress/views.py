@@ -10,7 +10,7 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.views.generic import FormView
+from django.views.generic import FormView, TemplateView
 import requests
 
 from .models import BookProgress, Book
@@ -26,7 +26,7 @@ class UpdateProgressForm(forms.Form):
     read_pages = forms.IntegerField()
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class UpdateProgressView(FormView):
     form_class = UpdateProgressForm
     template_name = 'index.html'
@@ -62,7 +62,7 @@ class AddBookForm(forms.ModelForm):
         return book
 
 
-@login_required
+@login_required(login_url='login')
 def add_book(request):
     if request.method == 'POST':
         data = request.POST.copy()
@@ -73,7 +73,7 @@ def add_book(request):
     return redirect('update_progress', user_id=request.user.id)
 
 
-@login_required
+@login_required(login_url='login')
 def delete_book(request, book_id):
     if request.method == 'POST':
         Book.objects.filter(id=book_id, user=request.user).delete()
@@ -103,6 +103,15 @@ def oauth_callback(request):
     user, _ = get_user_model().objects.get_or_create(email=email)
     login(request, user)
     return redirect('update_progress', user_id=user.id)
+
+
+class LoginView(TemplateView):
+    template_name = 'login.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('update_progress', user_id=request.user.id)
+        return super().dispatch(request, *args, **kwargs)
 
 
 def _get_redirect_uri(request):
