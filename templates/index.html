@@ -1,10 +1,5 @@
 {% extends "base.html" %}
 {% block body %}
-    <style>
-      .flex-horizontal {
-          display: flex;
-      }
-    </style>
   <div style="margin-top: 2em">
   <h5>You're reading:</h5>
   {% for progress in progresses %}
@@ -12,11 +7,11 @@
       {{ book.title }} ({{ progress.page }}/{{ book.pages }}) will be completed at {{ progress.expected_end|default_if_none:"N/A" }}.
       Current tempo is {{ progress.avg_pages_per_day }} pages per day.
     {% endwith %}
-    <form id="progress-form-{{ progress.id }}" method="POST" action="{% url 'update_progress' %}">
+    <form id="progress-form-{{ progress.id }}" method="POST" action="{% url 'update_progress' user_id=user.id %}">
       <input type="hidden" name="progress" value="{{ progress.id }}" />
       <label for="progress-currentPage-{{ progress.id }}">Current page:</label>
       <input
-        class="light-input short"
+        class="short"
         id="progress-currentPage-{{ progress.id }}"
         type="number"
         name="current_page"
@@ -25,16 +20,16 @@
       />
       <label for="progress-readPages-{{ progress.id }}">Read pages:</label>
       <input
-        class="light-input short"
+        class="short"
         id="progress-readPages-{{ progress.id }}"
         type="number"
         name="read_pages"
-        value="{{ progress.avg_pages_per_day|floatformat:0 }}"
+        placeholder="{{ progress.avg_pages_per_day|floatformat:0 }}"
         required
       />
       <label for="progress-date-{{ progress.id }}">Date:</label>
       <input
-        class="progress-date light-input"
+        class="progress-date"
         id="progress-date-{{ progress.id }}"
         type="date"
         name="date"
@@ -51,10 +46,10 @@
   <h5>Add a book:</h5>
   <form id="add-book" method="POST" action="{% url 'add_book' %}">
     {% csrf_token %}
-    <label class="unblock" for="book-title">Title:</label>
-    <input class="light-input" placeholder="Title of a book" type="text" id="book-title" name="title"/>
-    <label class="unblock" for="book-pages">Pages:</label>
-    <input class="light-input" placeholder="Total number of pages" type="text" id="book-pages" name="pages"/>
+    <label for="book-title">Title:</label>
+    <input placeholder="Title of a book" type="text" id="book-title" name="title"/>
+    <label for="book-pages">Pages:</label>
+    <input placeholder="Total number of pages" type="text" id="book-pages" name="pages"/>
     <input class="button" type="submit" form="add-book" value="Add">
   </form>
 

@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
+
 import django_heroku
 from pathlib import Path
 
@@ -133,5 +135,8 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+VK_CLIENT_ID = os.getenv('VK_CLIENT_ID', '')
+VK_SECRET_KEY = os.getenv('VK_SECRET_KEY', '')
 
 django_heroku.settings(locals())

@@ -1,10 +1,12 @@
 from datetime import date, timedelta
 
+from django.conf import settings
 from django.db import models
 from django.db.models import Avg
 
 
 class Book(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     pages = models.PositiveIntegerField(default=0)
 

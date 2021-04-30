@@ -16,11 +16,13 @@ Including another URLconf
 # from django.contrib import admin
 from django.urls import path
 
-from progress.views import add_book, delete_book, UpdateProgressView
+from progress.views import add_book, delete_book, UpdateProgressView, oauth_request, oauth_callback
 
 urlpatterns = [
-    path('', UpdateProgressView.as_view(), name='update_progress'),
+    path('profile/<int:user_id>', UpdateProgressView.as_view(), name='update_progress'),
     path('add-book/', add_book, name='add_book'),
     path('delete-book/<int:book_id>/', delete_book, name='delete_book'),
+    path('oauth/', oauth_request, name='oauth_request'),
+    path('oauth/callback/', oauth_callback, name='oauth_callback'),
     # path('admin/', admin.site.urls),
 ]

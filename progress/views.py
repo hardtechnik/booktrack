@@ -1,13 +1,17 @@
 from datetime import date
+from urllib.parse import urlencode, urljoin
 
 from django import forms
+from django.conf import settings
+from django.contrib.auth import login, get_user_model
+from django.contrib.auth.decorators import login_required
 from django.forms import widgets
+from django.http import Http404
 from django.shortcuts import redirect
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView
-
-from basicauth.decorators import basic_auth_required
+import requests
 
 from .models import BookProgress, Book
 
@@ -22,17 +26,22 @@ class UpdateProgressForm(forms.Form):
     read_pages = forms.IntegerField()
 
 
-@method_decorator(basic_auth_required, name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class UpdateProgressView(FormView):
     form_class = UpdateProgressForm
-    success_url = reverse_lazy('update_progress')
     template_name = 'index.html'
 
+    def get_success_url(self):
+        return reverse('update_progress', kwargs={'user_id': self.request.user.id})
+
     def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs, progresses=BookProgress.objects.all())
+        user_progress = BookProgress.objects.filter(book__user=self.request.user)
+        return super().get_context_data(**kwargs, progresses=user_progress)
 
     def form_valid(self, form):
         progress: BookProgress = form.cleaned_data['progress']
+        if not progress.book.user == self.request.user:
+            raise Http404
         progress.page = form.cleaned_data['current_page'] + form.cleaned_data['read_pages']
         progress.save(update_fields=['page'])
         progress.daily.update_or_create(
@@ -45,7 +54,7 @@ class UpdateProgressView(FormView):
 class AddBookForm(forms.ModelForm):
     class Meta:
         model = Book
-        fields = ['title', 'pages']
+        fields = ['title', 'pages', 'user']
 
     def save(self, commit=True):
         book = super().save()
@@ -53,17 +62,48 @@ class AddBookForm(forms.ModelForm):
         return book
 
 
-@basic_auth_required
+@login_required
 def add_book(request):
     if request.method == 'POST':
-        form = AddBookForm(request.POST)
+        data = request.POST.copy()
+        data['user'] = request.user.id
+        form = AddBookForm(data)
         if form.is_valid():
             form.save()
-    return redirect('update_progress')
+    return redirect('update_progress', user_id=request.user.id)
 
 
-@basic_auth_required
+@login_required
 def delete_book(request, book_id):
     if request.method == 'POST':
-        Book.objects.filter(id=book_id).delete()
-    return redirect('update_progress')
+        Book.objects.filter(id=book_id, user=request.user).delete()
+    return redirect('update_progress', user_id=request.user.id)
+
+
+def oauth_request(request):
+    params = urlencode({
+        'client_id': settings.VK_CLIENT_ID,
+        'redirect_uri': _get_redirect_uri(request),
+        'display': 'popup',
+        'scope': 1 << 22,
+        'response_type': 'code',
+    })
+    return redirect(f'https://oauth.vk.com/authorize?{params}')
+
+
+def oauth_callback(request):
+    code = request.GET['code']
+    response = requests.get('https://oauth.vk.com/access_token', params={
+        'client_id': settings.VK_CLIENT_ID,
+        'client_secret': settings.VK_SECRET_KEY,
+        'redirect_uri': _get_redirect_uri(request),
+        'code': code,
+    })
+    email = response.json()['email']
+    user, _ = get_user_model().objects.get_or_create(email=email)
+    login(request, user)
+    return redirect('update_progress', user_id=user.id)
+
+
+def _get_redirect_uri(request):
+    return urljoin(f'https://{request.get_host()}', reverse('oauth_callback'))
