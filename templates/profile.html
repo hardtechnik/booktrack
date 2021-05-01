@@ -7,7 +7,7 @@
       {{ book.title }} ({{ progress.page }}/{{ book.pages }}) will be completed at {{ progress.expected_end|default_if_none:"N/A" }}.
       Current tempo is {{ progress.avg_pages_per_day }} pages per day.
     {% endwith %}
-    <form id="progress-form-{{ progress.id }}" method="POST" action="{% url 'update_progress' user_id=user.id %}">
+    <form id="progress-form-{{ progress.id }}" method="POST" action="{% url 'profile' user_id=user.id %}">
       <input type="hidden" name="progress" value="{{ progress.id }}" />
       <label for="progress-currentPage-{{ progress.id }}">Current page:</label>
       <input
