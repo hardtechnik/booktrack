@@ -72,7 +72,7 @@ def oauth_callback(request):
         'code': code,
     })
     email = response.json()['email']
-    user, _ = get_user_model().objects.get_or_create(email=email)
+    user, _ = get_user_model().objects.get_or_create(username=email, email=email)
     login(request, user)
     return redirect('profile', user_id=user.id)
 
