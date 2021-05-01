@@ -16,8 +16,16 @@ Including another URLconf
 # from django.contrib import admin
 from django.urls import path
 
-from progress.views import add_book, delete_book, update_progress, oauth_request, oauth_callback, \
-    login_view, profile_view
+from progress.views import (
+    add_book,
+    delete_book,
+    login_view,
+    oauth_callback,
+    oauth_request,
+    profile_view,
+    update_progress,
+)
+
 
 urlpatterns = [
     path('profile/<int:user_id>', profile_view, name='profile'),

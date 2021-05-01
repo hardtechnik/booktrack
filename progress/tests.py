@@ -1,8 +1,9 @@
 from datetime import date, timedelta
 
-import pytest
 from django.contrib.auth.models import User
 from django.urls import reverse
+
+import pytest
 
 from .forms import UpdateProgressForm
 from .models import Book, BookProgress, DailyProgress

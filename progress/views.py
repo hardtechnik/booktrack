@@ -1,16 +1,17 @@
 from urllib.parse import urlencode, urljoin
 
 from django.conf import settings
-from django.contrib.auth import login, get_user_model
+from django.contrib.auth import get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+
 import requests
 
-from .forms import UpdateProgressForm, AddBookForm
-from .models import BookProgress, Book
+from .forms import AddBookForm, UpdateProgressForm
+from .models import Book, BookProgress
 
 
 @login_required(login_url='login')

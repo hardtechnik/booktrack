@@ -3,7 +3,7 @@ from datetime import date
 from django import forms
 from django.forms import widgets
 
-from progress.models import BookProgress, Book
+from .models import Book, BookProgress
 
 
 class UpdateProgressForm(forms.Form):
