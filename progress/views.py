@@ -1,11 +1,12 @@
 from urllib.parse import urlencode, urljoin
 
 from django.conf import settings
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.timezone import now
 from django.views.decorators.http import require_http_methods
 
 import requests
@@ -14,11 +15,10 @@ from .forms import AddBookForm, UpdateProgressForm
 from .models import Book, BookProgress
 
 
-@login_required(login_url='login')
 def profile_view(request, user_id):
     profile = get_object_or_404(User, pk=user_id)
     user_progress = BookProgress.objects.filter(book__user=profile)
-    context = {'progresses': user_progress, 'profile': profile}
+    context = {'progresses': user_progress, 'profile': profile, 'current_date': now().date()}
     return render(request, 'profile.html', context)
 
 
@@ -81,6 +81,12 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect('profile', user_id=request.user.id)
     return render(request, 'login.html')
+
+
+@login_required(login_url='login')
+def logout_view(request):
+    logout(request)
+    return redirect('login')
 
 
 def _get_redirect_uri(request):

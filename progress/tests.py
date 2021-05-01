@@ -41,15 +41,12 @@ def test_create_progress(db, client, user):
 
 
 @pytest.fixture(params=[
-    'profile',
     'update_progress',
     'add_book',
     'delete_book',
 ])
 def private_url(request, user, book):
     kwargs = {}
-    if request.param == 'profile':
-        kwargs = {'user_id': user.id}
     if request.param == 'update_progress':
         kwargs = {'progress_id': book.progress.get().id}
     if request.param == 'delete_book':

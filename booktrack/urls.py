@@ -20,6 +20,7 @@ from progress.views import (
     add_book,
     delete_book,
     login_view,
+    logout_view,
     oauth_callback,
     oauth_request,
     profile_view,
@@ -34,5 +35,6 @@ urlpatterns = [
     path('delete-book/<int:book_id>/', delete_book, name='delete_book'),
     path('oauth/', oauth_request, name='oauth_request'),
     path('oauth/callback/', oauth_callback, name='oauth_callback'),
-    path('', login_view, name='login')
+    path('', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
 ]
